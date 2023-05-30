@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css'
 import './App.css';
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import requestGet from './requestGet'
 import List from './components/List';
 import Details from './components/Details';
@@ -8,12 +8,19 @@ import Details from './components/Details';
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [showDetail, setShowDetail] = useState(false)
-  const detailedInfo = useRef();
+  const [isShowingDetail, setIsShowingDetail] = useState(false)
+  const [detail, setDetail] = useState(null);
 
   const handlerClick = (item) => {
-    detailedInfo.current = item;
-    setShowDetail(true);
+    setIsShowingDetail(false);
+    setTimeout(() => {
+      if (detail && detail.id === item.id) {
+        setDetail(null)
+      } else {
+        setDetail(item);
+        setIsShowingDetail(true);
+      }
+    }, 0)
   }
 
   const loading = async () => {
@@ -26,12 +33,12 @@ function App() {
 
   return (
     <div className="container text-center">
-      <div className="row align-items-center">
-        <div className="col">
+      <div className="row align-items-top">
+        <div className="col-3">
           {isLoading ? <div>Loading...</div> : <List list={data} onClick={handlerClick}/>}
         </div>
         <div className="col">
-          {!showDetail && <Details info={detailedInfo.current} />}
+          {isShowingDetail && <Details info={detail} />}
         </div>
       </div>
     </div>
